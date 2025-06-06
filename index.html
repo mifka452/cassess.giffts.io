@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TON OpenCase + Tonkeeper</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #000, #0a0a0a);
+      font-family: 'Orbitron', sans-serif;
+      color: #ffffff;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      background: rgba(0, 0, 0, 0.8);
+      border-bottom: 2px solid #00ffe1;
+      box-shadow: 0 2px 10px rgba(0,255,255,0.2);
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    .user-info img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 12px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.4);
+    }
+    .balance-box {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #00ffe1;
+      border-radius: 14px;
+      padding: 18px;
+      font-size: 22px;
+      margin-bottom: 30px;
+      display: inline-block;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
+    }
+    .ton-connect-button {
+      margin-left: 20px;
+    }
+    .wallet-button {
+      background: linear-gradient(90deg, #00ffe1, #0088ff);
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 0 12px #00ffe1;
+    }
+    .content {
+      padding: 30px 20px 100px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="user-info">
+      <img src="https://via.placeholder.com/40" alt="avatar" id="userAvatar">
+      <span id="userName">Гость</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="balance-box" style="margin: 0; font-size: 16px; padding: 8px 16px;">💰 <span id="balance">0</span> TON</div>
+      <div id="ton-connect" class="ton-connect-button"></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <h1>🎁 TON OpenCase</h1>
+    <p>Подключи Tonkeeper и начни открывать кейсы!</p>
+    <button class="wallet-button" onclick="startSpin()">Открыть кейс за 3 TON</button>
+    <br><br>
+    <button class="wallet-button" onclick="depositTon()">💸 Пополнить 3 TON</button>
+  </div>
+
+  <script>
+    let userAddress = null;
+
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: "https://yourdomain.com/tonconnect-manifest.json",
+      buttonRootId: "ton-connect"
+    });
+
+    tonConnectUI.onStatusChange(wallet => {
+      if (wallet?.account?.address) {
+        userAddress = wallet.account.address;
+        document.getElementById("userName").innerText = wallet.account.address.slice(0, 6) + "..." + wallet.account.address.slice(-4);
+      } else {
+        userAddress = null;
+        document.getElementById("userName").innerText = "Гость";
+      }
+    });
+
+    function startSpin() {
+      if (!userAddress) {
+        alert("Сначала подключи Tonkeeper!");
+        return;
+      }
+      alert("🎉 Кейс открыт! Баланс будет списан, если интеграция завершена.");
+    }
+
+    function depositTon() {
+      if (!userAddress) {
+        alert("Сначала подключи Tonkeeper!");
+        return;
+      }
+      const amount = 3 * 1e9; // 3 TON в нанотоннах
+      const destination = "YOUR_TON_WALLET_ADDRESS_HERE"; // Заменить на адрес смарт-контракта или кошелька
+      const url = `https://app.tonkeeper.com/transfer/${destination}?amount=${amount}&text=Пополнение+TON+OpenCase`;
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>
